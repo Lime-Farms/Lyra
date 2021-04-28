@@ -2,7 +2,7 @@
 
 lyra: bin/lyra
 
-bin/lyra: src/lyra.o
+bin/lyra: bin/lyra.o
 	mkdir -p -- ./bin
 	cc -std=c99 -Wall -Wextra -pedantic -g -O1 -o bin/lyra $^
 
