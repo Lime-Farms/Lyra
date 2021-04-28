@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE
+
 #include <errno.h>
 #include <hm.h>
 #include <stdio.h>
