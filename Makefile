@@ -2,7 +2,7 @@
 
 lyra: bin/lyra
 
-bin/lyra: bin/lyra.o
+bin/lyra: bin/lyra.o bin/hm-node.o bin/hm-ll.o bin/hm.o
 	mkdir -p -- ./bin
 	cc -std=c99 -Wall -Wextra -pedantic -g -O1 -o bin/lyra $^
 
