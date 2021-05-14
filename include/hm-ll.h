@@ -12,7 +12,7 @@ struct hm_ll {
 struct hm_ll hm_ll_new();
 uint8_t hm_ll_del(struct hm_ll *list);
 
-struct hm_ll *hm_ll_add(struct hm_ll *list, const char *key, const char *value);
+struct hm_ll *hm_ll_add(struct hm_ll *list, const char *key, const void *value);
 uint8_t hm_ll_rem(struct hm_ll *list, struct hm_node *entry);
 
 #endif

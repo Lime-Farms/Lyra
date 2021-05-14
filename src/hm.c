@@ -40,7 +40,7 @@ static uint16_t hm_hash(const char *str) {
   return value % HM_BKT_SIZE;
 }
 
-uint8_t hm_add(struct hm *map, const char *key, const char *value) {
+uint8_t hm_add(struct hm *map, const char *key, const void *value) {
   if(key == NULL || value == NULL) {
     return 1;
   }
@@ -67,11 +67,11 @@ uint8_t hm_has(struct hm *map, const char *key) {
   return hm_key(map, key) != NULL;
 }
 
-const char *hm_key(struct hm *map, const char *key) {
+const void *hm_key(struct hm *map, const char *key) {
   return hm_key_default(map, key, NULL);
 }
 
-const char *hm_key_default(struct hm *map, const char *key, const char *value) {
+const void *hm_key_default(struct hm *map, const char *key, const void *value) {
   if(key == NULL) {
     return NULL;
   }
@@ -88,7 +88,7 @@ const char *hm_key_default(struct hm *map, const char *key, const char *value) {
   return value;
 }
 
-const char *hm_rem(struct hm *map, const char *key) {
+const void *hm_rem(struct hm *map, const char *key) {
   if(key == NULL) {
     return NULL;
   }

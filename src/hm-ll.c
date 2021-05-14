@@ -20,7 +20,7 @@ uint8_t hm_ll_del(struct hm_ll *list) {
   return 0;
 }
 
-struct hm_ll *hm_ll_add(struct hm_ll *list, const char *key, const char *value) {
+struct hm_ll *hm_ll_add(struct hm_ll *list, const char *key, const void *value) {
   list->list = hm_node_add(list->tail, key, value);
   list->tail = list->list;
 
