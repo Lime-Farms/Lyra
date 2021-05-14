@@ -1,7 +1,7 @@
 #ifndef __LYRA_HM_LL_H
 #define __LYRA_HM_LL_H
 
-#include <hm-node.h>
+#include <lyra/hm-node.h>
 
 struct hm_ll {
   struct hm_node *list;

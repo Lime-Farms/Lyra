@@ -1,4 +1,4 @@
-#include <ring.h>
+#include <lyra/ring.h>
 #include <stdlib.h>
 
 struct ring *ring_new(uint16_t len) {

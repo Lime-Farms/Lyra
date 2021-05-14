@@ -1,4 +1,4 @@
-#include <hm-node.h>
+#include <lyra/hm-node.h>
 #include <stdlib.h>
 
 struct hm_node *hm_node_new(const char *key, const void *value) {

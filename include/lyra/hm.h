@@ -1,7 +1,7 @@
 #ifndef __LYRA_HM_H
 #define __LYRA_HM_H
 
-#include <hm-ll.h>
+#include <lyra/hm-ll.h>
 
 #define HM_OVERWRITE (1 << 0)
 #define HM_BKT_SIZE 64

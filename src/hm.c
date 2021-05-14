@@ -1,4 +1,4 @@
-#include <hm.h>
+#include <lyra/hm.h>
 #include <string.h>
 
 struct hm hm_new(uint8_t options) {
