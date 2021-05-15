@@ -3,6 +3,11 @@
 
 struct hm_node *hm_node_new(const char *key, const void *value) {
   struct hm_node *new = calloc(1, sizeof(struct hm_node));
+
+  if(new == NULL) {
+    return NULL;
+  }
+
   new->next = NULL;
   new->prev = NULL;
   new->key = key;
