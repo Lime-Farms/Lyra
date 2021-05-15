@@ -98,7 +98,7 @@ const void *hm_rem(struct hm *map, const char *key) {
 
   for(; iter != NULL; iter = iter->next) {
     if(strcmp(iter->key, key) == 0) {
-      const char *value = iter->value;
+      const void *value = iter->value;
       hm_ll_rem(&map->bkts[idx], iter);
       return value;
     }
