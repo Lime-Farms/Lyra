@@ -27,7 +27,7 @@ struct hm_ll *hm_ll_add(struct hm_ll *list, const char *key, const void *value) 
     list->head = list->list;
   }
 
-  return list->list;
+  return list;
 }
 
 uint8_t hm_ll_rem(struct hm_ll *list, struct hm_node *entry) {
