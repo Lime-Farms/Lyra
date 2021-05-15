@@ -12,8 +12,10 @@ struct hm_ll hm_ll_new() {
 uint8_t hm_ll_del(struct hm_ll *list) {
   struct hm_node *iter = list->head;
 
-  for(; iter != NULL; iter = iter->next) {
-    hm_ll_rem(list, iter);
+  while(iter != NULL) {
+    struct hm_node *entry = iter;
+    iter = iter->next;
+    hm_ll_rem(list, entry);
   }
 
   return 0;
