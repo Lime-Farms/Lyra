@@ -6,11 +6,6 @@
 #include <strings.h>
 #include <unistd.h>
 
-uint8_t print_env(const char *key, const void *value) {
-  printf("%s: %s\n", key, (const char *) value);
-  return 0;
-}
-
 int main(int argc, char **argv, char **env) {
   int arg = opterr = 0;
 
@@ -35,7 +30,6 @@ int main(int argc, char **argv, char **env) {
     }
   }
 
-  hm_foreach(&env_vars, print_env);
   hm_del(&env_vars);
   return 0;
 }
