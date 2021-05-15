@@ -1,29 +1,41 @@
 #define _XOPEN_SOURCE
 
 #include <errno.h>
-#include <hm.h>
+#include <lyra/hm.h>
 #include <stdio.h>
-#include <string.h>
+#include <strings.h>
 #include <unistd.h>
 
-int main(int argc, char **argv, char **envs) {
+uint8_t print_env(const char *key, const void *value) {
+  printf("%s: %s\n", key, (const char *) value);
+  return 0;
+}
+
+int main(int argc, char **argv, char **env) {
   int arg = opterr = 0;
 
   while((arg = getopt(argc, argv, "")) > 0) {
     if(arg == '?') {
-      fprintf(stderr, "error: option '-%c' incorrectly used.\n", arg);
+      fprintf(stderr, "error: option '-%c' incorrectly used.\n", optopt);
       return EINVAL;
     }
   }
 
-  char **env = envs;
-  struct hm map = hm_new(0);
+  char **var = env;
+  struct hm env_vars = hm_new(0);
 
-  for(; *env != NULL; env += 1) {
-    const char *name = strtok(*env, "=");
-    size_t len = strlen(name);
-    hm_add(&map, name, *env + len + 1);
+  for(; *var != NULL; var += 1) {
+    char *const place = index(*var, '=');
+
+    if(place == NULL) { /* Is this even possible? */
+      hm_add(&env_vars, *var, "");
+    } else {
+      *place = '\0';
+      hm_add(&env_vars, *var, place + 1);
+    }
   }
 
+  hm_foreach(&env_vars, print_env);
+  hm_del(&env_vars);
   return 0;
 }
