@@ -1,7 +1,6 @@
 #include <lyra/hm-ll.h>
 #include <stdlib.h>
 
-
 struct hm_ll hm_ll_new() {
   struct hm_ll new;
   new.list = NULL;
@@ -28,7 +27,7 @@ struct hm_ll *hm_ll_add(struct hm_ll *list, const char *key, const void *value) 
     list->head = list->list;
   }
 
-  return 0;
+  return list->list;
 }
 
 uint8_t hm_ll_rem(struct hm_ll *list, struct hm_node *entry) {
