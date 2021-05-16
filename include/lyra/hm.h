@@ -4,6 +4,7 @@
 #include <lyra/hm-ll.h>
 
 #define HM_OVERWRITE (1 << 0)
+
 #define HM_BKT_SIZE 64
 
 typedef uint8_t (*hm_cb)(const char *key, const void *value);
