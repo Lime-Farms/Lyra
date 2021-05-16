@@ -1,10 +1,6 @@
 #include <lyra/em.h>
 #include <stdlib.h>
-
-static struct em_cooked_curry {
-  em_cb cb;
-  void *arg;
-};
+#include <unistd.h>
 
 struct em *em_new() {
   struct em *new = malloc(sizeof(struct em));

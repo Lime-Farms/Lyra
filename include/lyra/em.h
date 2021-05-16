@@ -11,6 +11,11 @@
 
 typedef uint8_t (*em_cb)(struct epoll_event *event, void *arg);
 
+struct em_cooked_curry {
+  em_cb cb;
+  void *arg;
+};
+
 struct em {
   int fd;
 };
