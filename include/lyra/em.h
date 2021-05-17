@@ -18,5 +18,6 @@ struct em *em_new();
 uint8_t em_del(struct em *ctx);
 
 uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg);
+uint8_t em_run(struct em *ctx);
 
 #endif
