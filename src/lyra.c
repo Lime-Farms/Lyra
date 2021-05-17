@@ -13,6 +13,7 @@
 #include <sys/timerfd.h>
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
 
 uint8_t beep(struct em_curry *ctx, void *arg) {
   uint64_t buf = 0;
