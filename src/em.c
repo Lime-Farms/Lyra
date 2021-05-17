@@ -2,8 +2,38 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+/*
+#define EM_READ (1 << 0)
+#define EM_WRITE (1 << 1)
+
+#define EM_MAX_EVENTS 64
+
+typedef uint8_t (*em_cb)(struct epoll_event *event, void *arg);
+
+struct em_curry {
+  em_cb cb;
+  void *arg;
+  int fd;
+};
+
+struct em {
+  int fd;
+  struct epoll_event *events[EM_MAX_EVENTS];
+  uint8_t free_events[EM_MAX_EVENTS];
+  uint8_t event_idx;
+};
+
+struct em *em_new();
+uint8_t em_del(struct em *ctx);
+*/
+
 struct em *em_new() {
   struct em *new = malloc(sizeof(struct em));
+
+  if(new == NULL ) {
+    return NULL;
+  }
+
   new->fd = epoll_create1(0);
  
   if(new->fd < 0) {
@@ -11,10 +41,32 @@ struct em *em_new() {
     return NULL;
   }
 
+  new->event_idx = 0;
+
+  for(; new->event_idx < EM_MAX_EVENTS; new->event_idx += 1) {
+    new->events[new->event_idx] = malloc(sizeof(struct epoll_event));
+
+    if(new->events[new->event_idx] == NULL) {
+      close(new->fd);
+      free(new);
+      return NULL;
+    }
+
+    new->free_events[new->event_idx] = new->event_idx;
+  }
+
   return new;
 }
 
 uint8_t em_del(struct em *ctx) {
+  uint8_t idx = 0;
+
+  for(; idx < EM_MAX_EVENTS; idx += 1) {
+    if(ctx->events[idx] != NULL) {
+      free(ctx->events[idx]);
+    }
+  }
+
   close(ctx->fd);
   free(ctx);
   ctx = NULL;
@@ -22,6 +74,10 @@ uint8_t em_del(struct em *ctx) {
 }
 
 int em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg) {
+  /*
+   * have em_watch throw the fd into a backlog if its full
+   */
+
   struct epoll_event *event = malloc(sizeof(struct epoll_event));
 
   if(event == NULL) {
@@ -36,13 +92,14 @@ int em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg) {
     event->events |= EPOLLOUT;
   }
 
-  struct em_cooked_curry *curry = malloc(sizeof(struct em_cooked_curry));
+  struct em_curry *curry = malloc(sizeof(struct em_curry));
 
   if(curry == NULL) {
     free(event);
     return 2;
   }
 
+  curry->fd = fd;
   curry->cb = cb;
   curry->arg = arg;
   event->data.ptr = (void *) curry;
@@ -56,29 +113,9 @@ int em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg) {
   }
 }
 
+int em_stop(struct em *ctx, int fd)
 
 /*
- 
-  struct itimerspec stop = {{ 0, 0 }, { 5, 0 }};
-  int timer = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK);
-
-  if(timer < 0) {
-    fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
-    return 1;
-  }
-
-  struct epoll_event event = { EPOLLIN, { .fd = timer }};
-
-  if(epoll_ctl(mgr, EPOLL_CTL_ADD, timer, &event) < 0) {
-    fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
-    return 1;
-  }
-
-  if(timerfd_settime(timer, 0, &stop, NULL) < 0) {
-    fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
-    return 1;
-  }
-
   int running = 42;
 
   while(running) {

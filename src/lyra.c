@@ -1,6 +1,7 @@
 #define _XOPEN_SOURCE
 
 #include <errno.h>
+#include <lyra/em.h>
 #include <lyra/hm.h>
 #include <stdio.h>
 #include <strings.h>
@@ -30,6 +31,9 @@ int main(int argc, char **argv, char **env) {
     }
   }
 
+  struct em *mgr = em_new();
+
+  em_del(mgr);
   hm_del(&env_vars);
   return 0;
 }
