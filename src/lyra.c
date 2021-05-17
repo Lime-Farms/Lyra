@@ -10,9 +10,6 @@
 #define _POSIX_C_SOURCE 199309L
 #include <sys/timerfd.h>
 
-typedef uint8_t (*em_cb)(struct epoll_event *event, void *arg);
-
-
 uint8_t beep(struct em_curry *ctx, void *arg) {
   uint64_t buf = 0;
   ssize_t bytes = read(ctx->fd, &buf, sizeof(buf));
