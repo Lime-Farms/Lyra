@@ -1,6 +1,7 @@
 #ifndef __LYRA_EM_H
 #define __LYRA_EM_H
 
+#include <lyra/ring.h>
 #include <stdint.h>
 #include <sys/epoll.h>
 
@@ -12,21 +13,18 @@
 typedef uint8_t (*em_cb)(struct epoll_event *event, void *arg);
 
 struct em_curry {
+  int fd;
+  struct epoll_event *event;
   em_cb cb;
   void *arg;
-  int fd;
+  struct ring *buffer;
 };
 
 struct em {
   int fd;
-  struct epoll_event *events[EM_MAX_EVENTS];
-  uint8_t free_events[EM_MAX_EVENTS];
-  uint8_t event_idx;
 };
 
 struct em *em_new();
 uint8_t em_del(struct em *ctx);
-
-int em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg);
 
 #endif
