@@ -9,6 +9,7 @@
 
 #define _POSIX_C_SOURCE 199309L
 #include <sys/timerfd.h>
+#include <time.h>
 #include <string.h>
 
 uint8_t beep(struct em_curry *ctx, void *arg) {
@@ -17,7 +18,6 @@ uint8_t beep(struct em_curry *ctx, void *arg) {
 
   if(bytes < 0 && errno != EAGAIN) {
     fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
-    running = 0;
   } else if(bytes == sizeof(uint64_t)) {
     printf("beep!\n");
   }
@@ -70,7 +70,7 @@ int main(int argc, char **argv, char **env) {
 
   while(running) {
     struct epoll_event events[EM_MAX_EVENTS] = { 0 };
-    int max_events = epoll_wait(mgr, events, LYRA_MAX_EVENTS, 0);
+    int max_events = epoll_wait(mgr->fd, events, EM_MAX_EVENTS, 0);
     int idx = 0;
 
     for(; idx < max_events; idx += 1) {
