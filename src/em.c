@@ -113,8 +113,6 @@ int em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg) {
   }
 }
 
-int em_stop(struct em *ctx, int fd)
-
 /*
   int running = 42;
 
