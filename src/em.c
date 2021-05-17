@@ -3,8 +3,6 @@
 #include <strings.h>
 #include <unistd.h>
 
-/* TODO: keep track of watched events, and if it hits 0, shut down the loop */
-
 struct em *em_new() {
   struct em *new = malloc(sizeof(struct em));
 
@@ -19,6 +17,7 @@ struct em *em_new() {
     return NULL;
   }
 
+  new->events = 0;
   return new;
 }
 
@@ -40,6 +39,7 @@ uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg) {
   curry->cb = cb;
   curry->arg = arg;
   curry->buffer = ring_new(4096); /* TODO: make buf size configurable */
+  new->events += 1;
 
   if(curry->buffer == NULL) {
     free(curry);
@@ -72,4 +72,19 @@ uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg) {
   } else {
     return 0;
   }
+}
+
+uint8_t em_run(struct em *ctx) {
+  while(ctx->events > 0) {
+    struct epoll_event events[EM_MAX_EVENTS] = { 0 };
+    int max_events = epoll_wait(ctx->fd, events, EM_MAX_EVENTS, 0);
+    int idx = 0;
+
+    for(; idx < max_events; idx += 1) {
+      struct em_curry *curry = events[idx].data.ptr;
+      curry->cb(curry, curry->arg);
+    }
+  }
+
+  return 0;
 }

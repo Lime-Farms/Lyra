@@ -69,21 +69,8 @@ int main(int argc, char **argv, char **env) {
     return 1;
   }
 
-  int running = 42;
-
-  while(running) {
-    struct epoll_event events[EM_MAX_EVENTS] = { 0 };
-    int max_events = epoll_wait(mgr->fd, events, EM_MAX_EVENTS, 0);
-    int idx = 0;
-
-    for(; idx < max_events; idx += 1) {
-      struct em_curry *curry = events[idx].data.ptr;
-      curry->cb(curry, curry->arg);
-    }
-  }
-
+  em_run(mgr);
   close(timer);
-
   em_del(mgr);
   hm_del(&env_vars);
   return 0;

@@ -11,6 +11,7 @@
 
 struct em {
   int fd;
+  uint32_t events;
 };
 
 struct em *em_new();
