@@ -1,4 +1,7 @@
 #define _XOPEN_SOURCE
+#define _POSIX_C_SOURCE 199309L
+
+/* TODO: determine which headers are needed after the test is finished */
 
 #include <errno.h>
 #include <lyra/em.h>
@@ -7,7 +10,6 @@
 #include <strings.h>
 #include <unistd.h>
 
-#define _POSIX_C_SOURCE 199309L
 #include <sys/timerfd.h>
 #include <time.h>
 #include <string.h>
@@ -50,9 +52,8 @@ int main(int argc, char **argv, char **env) {
   }
 
   struct em *mgr = em_new();
-  struct itimerspec stop = {{ 0, 0 }, { 5, 0 }};
-
   int duration = 10;
+  struct itimerspec stop = {{ 0, 0 }, { duration, 0 }};
   int timer = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK);
 
   if(em_watch(mgr, timer, EM_READ, beep, &duration) > 0) {

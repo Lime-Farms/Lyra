@@ -3,6 +3,8 @@
 #include <strings.h>
 #include <unistd.h>
 
+/* TODO: keep track of watched events, and if it hits 0, shut down the loop */
+
 struct em *em_new() {
   struct em *new = malloc(sizeof(struct em));
 
