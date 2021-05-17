@@ -22,6 +22,7 @@ uint8_t beep(struct em_curry *ctx, void *arg) {
     fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
   } else if(bytes == sizeof(uint64_t)) {
     printf("beep!\n");
+    exit(0);
   }
 
   return 0;
