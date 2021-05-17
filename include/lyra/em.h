@@ -10,8 +10,6 @@
 
 #define EM_MAX_EVENTS 64
 
-typedef uint8_t (*em_cb)(struct epoll_event *event, void *arg);
-
 struct em {
   int fd;
 };
