@@ -5,7 +5,7 @@ lyra: init bin/lyra
 init:
 	mkdir -p -- bin
 
-bin/lyra: bin/lyra.o bin/hm-node.o bin/hm-ll.o bin/hm.o bin/ring.o bin/em.o
+bin/lyra: bin/lyra.o bin/hm-node.o bin/hm-ll.o bin/hm.o bin/ring.o bin/em.o bin/timer.o
 	cc -std=c99 -Wall -Wextra -pedantic -g -O1 -o bin/lyra $^
 
 bin/%.o: src/%.c

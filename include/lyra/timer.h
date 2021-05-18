@@ -4,7 +4,7 @@
 #include <lyra/em.h>
 #include <sys/timerfd.h>
 
-typedef uint8_t (*timer_cb)(int duration, uint16_t duration);
+typedef uint8_t (*timer_cb)(int duration, uint16_t iteration);
 
 struct timer {
   int fd;
