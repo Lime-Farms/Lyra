@@ -40,8 +40,8 @@ uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg, ui
   curry->arg = arg;
   curry->buffer = ring_new(4096); /* TODO: make buf size configurable */
   curry->mgr = ctx;
+  curry->options = options;
   ctx->events += 1;
-  ctx->options = options;
 
   if(curry->buffer == NULL) {
     free(curry);
