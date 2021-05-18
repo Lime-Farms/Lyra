@@ -1,5 +1,7 @@
+#include <errno.h>
 #include <lyra/timer.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 static uint8_t timer_beep(struct em_curry *ctx, void *arg) {
   struct timer *tmr = arg;
@@ -15,7 +17,7 @@ static uint8_t timer_beep(struct em_curry *ctx, void *arg) {
     if(res) {
       tmr->stop.it_value.tv_sec = tmr->duration;
 
-      if(timerfd_settime(tmr->fd, 0, tmr->stop, NULL) < 0) {
+      if(timerfd_settime(tmr->fd, 0, &tmr->stop, NULL) < 0) {
         return 1;
       } else {
         return 0;
@@ -43,7 +45,10 @@ struct timer *timer_new(timer_cb cb, int duration) {
     return NULL;
   }
 
-  new->stop = {{ 0, 0 }, { duration, 0 }};
+  new.stop.it_interval.tv_sec = 0;
+  new.stop.it_interval.tv_nsec = 0;
+  new.stop.it_value.tv_sec = duration;
+  new.stop.it_value.tv_nsec = 0;
   new->duration = duration;
   new->iteration = 0;
   new->cb = cb;
@@ -59,7 +64,7 @@ uint8_t timer_del(struct timer *tmr) {
 uint8_t timer_start(struct em *mgr, struct timer *tmr) {
   tmr->stop.it_value.tv_sec = tmr->duration;
 
-  if(timerfd_settime(tmr->fd, 0, tmr->stop, NULL) < 0) {
+  if(timerfd_settime(tmr->fd, 0, &tmr->stop, NULL) < 0) {
     return 42;
   }
 
@@ -69,7 +74,7 @@ uint8_t timer_start(struct em *mgr, struct timer *tmr) {
 uint8_t timer_stop(struct timer *tmr) {
   tmr->stop.it_value.tv_sec = 0;
 
-  if(timerfd_settime(tmr->fd, 0, tmr->stop, NULL) < 0) {
+  if(timerfd_settime(tmr->fd, 0, &tmr->stop, NULL) < 0) {
     return 1;
   } else {
     return 0;
