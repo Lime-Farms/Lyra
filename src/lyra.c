@@ -58,7 +58,7 @@ int main(int argc, char **argv, char **env) {
   struct itimerspec stop = {{ 0, 0 }, { duration, 0 }};
   int timer = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK);
 
-  if(em_watch(mgr, timer, EM_READ, beep, &duration) > 0) {
+  if(em_watch(mgr, timer, EM_READ, beep, &duration, 0) > 0) {
     em_del(mgr);
     hm_del(&env_vars);
     fprintf(stderr, "something went wrong :(\n");
