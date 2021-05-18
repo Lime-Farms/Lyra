@@ -18,6 +18,6 @@ struct timer *timer_new(timer_cb cb, int duration);
 uint8_t timer_del(struct timer *tmr);
 
 uint8_t timer_start(struct em *mgr, struct timer *tmr);
-uint8_t timer_stop(struct em *mgr, struct timer *tmr);
+uint8_t timer_stop(struct timer *tmr);
 
 #endif

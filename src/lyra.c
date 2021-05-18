@@ -45,8 +45,8 @@ int main(int argc, char **argv, char **env) {
   struct em *mgr = em_new();
   struct timer *t1 = timer_new(beep, 10);
   struct timer *t2 = timer_new(beep, 5);
-  tmr_start(mgr, t1);
-  tmr_start(mgr, t2);
+  timer_start(mgr, t1);
+  timer_start(mgr, t2);
   em_run(mgr);
   em_del(mgr);
   hm_del(&env_vars);

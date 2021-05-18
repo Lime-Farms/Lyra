@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include <errno.h>
 #include <lyra/timer.h>
 #include <stdlib.h>
@@ -45,10 +47,10 @@ struct timer *timer_new(timer_cb cb, int duration) {
     return NULL;
   }
 
-  new.stop.it_interval.tv_sec = 0;
-  new.stop.it_interval.tv_nsec = 0;
-  new.stop.it_value.tv_sec = duration;
-  new.stop.it_value.tv_nsec = 0;
+  new->stop.it_interval.tv_sec = 0;
+  new->stop.it_interval.tv_nsec = 0;
+  new->stop.it_value.tv_sec = duration;
+  new->stop.it_value.tv_nsec = 0;
   new->duration = duration;
   new->iteration = 0;
   new->cb = cb;
