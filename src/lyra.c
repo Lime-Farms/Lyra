@@ -1,32 +1,21 @@
 #define _XOPEN_SOURCE
-#define _POSIX_C_SOURCE 199309L
-
-/* TODO: determine which headers are needed after the test is finished */
 
 #include <errno.h>
-#include <lyra/em.h>
 #include <lyra/hm.h>
+#include <lyra/timer.h>
 #include <stdio.h>
+#include <string.h>
 #include <strings.h>
 #include <unistd.h>
 
-#include <sys/timerfd.h>
-#include <time.h>
-#include <string.h>
-#include <stdlib.h>
+uint8_t beep(int duration, uint16_t iteration) {
+  printf("%d timer beeped!\n", duration);
 
-uint8_t beep(struct em_curry *ctx, void *arg) {
-  uint64_t buf = 0;
-  ssize_t bytes = read(ctx->fd, &buf, sizeof(buf));
-
-  if(bytes < 0 && errno != EAGAIN) {
-    fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
-  } else if(bytes == sizeof(uint64_t)) {
-    printf("beep!\n");
+  if(iteration == 5) {
+    return 0;
+  } else {
+    return 1;
   }
-
-  em_ignore(ctx->mgr, ctx);
-  return 0;
 }
 
 int main(int argc, char **argv, char **env) {
@@ -54,23 +43,11 @@ int main(int argc, char **argv, char **env) {
   }
 
   struct em *mgr = em_new();
-  int duration = 10;
-  struct itimerspec stop = {{ 0, 0 }, { duration, 0 }};
-  int timer = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK);
-
-  if(em_watch(mgr, timer, EM_READ, beep, &duration, 0) > 0) {
-    em_del(mgr);
-    hm_del(&env_vars);
-    fprintf(stderr, "something went wrong :(\n");
-  }
-
-  if(timerfd_settime(timer, 0, &stop, NULL) < 0) {
-    fprintf(stderr, "%s:%d: error: (%d) %s\n", __FILE__, __LINE__, errno, strerror(errno));
-    return 1;
-  }
-
+  struct timer *t1 = timer_new(beep, 10);
+  struct timer *t2 = timer_new(beep, 5);
+  tmr_start(mgr, t1);
+  tmr_start(mgr, t2);
   em_run(mgr);
-  close(timer);
   em_del(mgr);
   hm_del(&env_vars);
   return 0;
