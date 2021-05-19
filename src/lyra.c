@@ -48,8 +48,8 @@ int main(int argc, char **argv, char **env) {
   timer_start(mgr, t1);
   timer_start(mgr, t2);
   em_run(mgr);
-  timer_del(mgr, t1);
-  timer_del(mgr, t2);
+  timer_del(t1);
+  timer_del(t2);
   em_del(mgr);
   hm_del(&env_vars);
   return 0;
