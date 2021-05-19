@@ -1,15 +1,23 @@
-.PHONY: lyra init docs test clean
+CFLAGS ?= -Wall -Wextra -Wpedantic -g -O1
+LDFLAGS ?= -g -O1
+LYRA_OBJS := lyra hm-node hm-ll hm ring em timer
 
-lyra: init bin/lyra
+.PHONY: all lyra init docs test clean
 
-init:
+all: lyra
+
+lyra: bin/lyra
+
+init: bin
+
+bin:
 	mkdir -p -- bin
 
-bin/lyra: bin/lyra.o bin/hm-node.o bin/hm-ll.o bin/hm.o bin/ring.o bin/em.o bin/timer.o
-	cc -std=c99 -Wall -Wextra -pedantic -g -O1 -o bin/lyra $^
+bin/lyra: $(addprefix bin/,$(addsuffix .o,$(LYRA_OBJS)))
+	cc $(LDFLAGS) -o bin/lyra $^
 
-bin/%.o: src/%.c
-	cc -std=c99 -Wall -Wextra -pedantic -g -O1 -I include -c -o $@ $^
+bin/%.o: src/%.c | init
+	cc $(CFLAGS) -std=c99 -I include -c -o $@ $<
 
 docs:
 	@printf "not implemented yet.\n" >&2
@@ -18,4 +26,4 @@ test:
 	@printf "not implemented yet.\n" >&2
 
 clean:
-	rm -rf -- bin/*
+	rm -r -- bin/*
