@@ -24,7 +24,7 @@ struct timer {
 uint16_t timer_new(struct timer *this, int duration, timer_cb cb);
 uint16_t timer_del(struct timer *this);
 
-uint8_t timer_start(struct timer *this, struct em *mgr);
-uint8_t timer_stop(struct timer *this);
+uint16_t timer_start(struct timer *this, struct em *mgr);
+uint16_t timer_stop(struct timer *this);
 
 #endif

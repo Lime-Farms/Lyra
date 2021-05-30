@@ -63,7 +63,7 @@ uint16_t timer_del(struct timer *this) {
   return LYRA_SUCCESS;
 }
 
-uint8_t timer_start(struct timer *this, struct em *mgr) {
+uint16_t timer_start(struct timer *this, struct em *mgr) {
   this->stop.it_value.tv_sec = this->duration;
 
   if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
@@ -73,7 +73,7 @@ uint8_t timer_start(struct timer *this, struct em *mgr) {
   return em_watch(mgr, this->fd, EM_READ, timer_beep, this, 0);
 }
 
-uint8_t timer_stop(struct timer *this) {
+uint16_t timer_stop(struct timer *this) {
   this->stop.it_value.tv_sec = 0;
 
   if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
