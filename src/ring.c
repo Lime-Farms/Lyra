@@ -61,7 +61,7 @@ char *ring_read(struct ring *this, uint16_t *len) {
     return NULL;
   }
 
-  while(idx < *len && buf->reader != buf->writer) {
+  while(idx < (*len - 1) && buf->reader != buf->writer) {
     str[idx] = *buf->reader;
     idx += 1;
     buf->reader += 1;
@@ -75,6 +75,7 @@ char *ring_read(struct ring *this, uint16_t *len) {
     *len = RING_EMPTY;
     return NULL;
   } else {
+    str[idx] = '\0';
     *len -= idx;
     return str;
   }
@@ -94,16 +95,11 @@ char *ring_readln(struct ring *buf, uint16_t *len) {
   }
 
   if(*idx != '\n') {
-    *len = 0;
+    *len = RING_NO_LINE;
     return NULL;
   }
 
   uint16_t line_len = *len + 1;
   char *str = ring_read(buf, &line_len);
-
-  if(str != NULL) {
-    str[*len] = '\0';
-  }
-
   return str;
 }

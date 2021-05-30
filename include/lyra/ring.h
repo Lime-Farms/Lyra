@@ -7,6 +7,7 @@
 #define LYRA_RING 700
 #define RING_TOO_SMALL 701
 #define RING_EMPTY 702
+#define RING_NO_LINE 703
 
 struct ring {
   uint16_t buflen;
