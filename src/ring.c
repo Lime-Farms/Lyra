@@ -1,71 +1,63 @@
+#include <lyra/error.h>
 #include <lyra/ring.h>
 #include <stdlib.h>
 
-struct ring *ring_new(uint16_t len) {
+uint16_t ring_new(struct ring *this, uint16_t len) {
   if(len < 3) {
-    return NULL;
+    return RING_TOO_SMALL;
   }
 
-  struct ring *new = malloc(sizeof(struct ring));
+  this->buflen = len + 1;
+  this->buffer = malloc(new->buflen);
 
-  if(new == NULL) {
-    return NULL;
+  if(this->buffer == NULL) {
+    return KERNEL_MALLOC_FAIL;
   }
 
-  new->buflen = len + 1;
-  new->buffer = malloc(new->buflen);
-
-  if(new->buffer == NULL) {
-    free(new);
-    return NULL;
-  }
-
-  new->begin = new->buffer;
-  new->end = new->buffer + len;
-  new->writer = new->buffer;
-  new->reader = new->buffer;
-  return new;
+  this->begin = this->buffer;
+  this->end = this->buffer + len;
+  this->reader = this->buffer;
+  this->writer = this->buffer;
+  return LYRA_SUCCESS;
 }
 
-uint8_t ring_del(struct ring *buf) {
+uint16_t ring_del(struct ring *this) {
   buf->buflen = 0;
   buf->begin = NULL;
   buf->end = NULL;
-  buf->writer = NULL;
   buf->reader = NULL;
+  buf->writer = NULL;
   free(buf->buffer);
-  free(buf);
-  return 0;
+  return LYRA_SUCCESS;
 }
 
-uint16_t ring_write(struct ring *buf, char *str, uint16_t orig_len) {
-  uint16_t len = orig_len;
-
+uint16_t ring_write(struct ring *this, char *str, uint16_t len) {
   while(len > 0) {
-    if(buf->writer == buf->end && buf->reader == buf->begin) {
+    if(this->writer == this->end && this->reader == this->begin) {
       break;
-    } else if(buf->writer == buf->end + 1) {
-      buf->writer = buf->begin;
+    } else if(this->writer == this->end + 1) {
+      this->writer = this->begin;
     } 
 
-    if(buf->writer == buf->reader - 1) {
+    if(this->writer == this->reader - 1) {
       break;
     }
 
-    *buf->writer = *str;
+    *this->writer = *str;
     len -= 1;
     str += 1;
-    buf->writer += 1;
+    this->writer += 1;
   }
 
   return len;
 }
 
-char *ring_read(struct ring *buf, uint16_t *len) {
+char *ring_read(struct ring *this, uint16_t *len) {
   char *str = malloc(*len);
   uint16_t idx = 0;
 
   if(str == NULL) {
+    *len = KERNEL_MALLOC_FAIL;
     return NULL;
   }
 
@@ -80,7 +72,7 @@ char *ring_read(struct ring *buf, uint16_t *len) {
   }
 
   if(idx == 0) {
-    *len = 0;
+    *len = RING_EMPTY;
     return NULL;
   } else {
     *len -= idx;
