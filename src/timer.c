@@ -6,20 +6,20 @@
 #include <unistd.h>
 
 static uint8_t timer_beep(struct em_curry *ctx, void *arg) {
-  struct timer *tmr = arg;
+  struct timer *this = arg;
   uint64_t buf = 0;
   ssize_t bytes = read(ctx->fd, &buf, sizeof(buf));
 
   if(bytes < 0 && errno != EAGAIN) {
     return 2;
   } else if(bytes == sizeof(uint64_t)) {
-    tmr->iteration += 1;
-    uint8_t res = tmr->cb(tmr->duration, tmr->iteration);
+    this->iteration += 1;
+    uint8_t res = this->cb(this->duration, this->iteration);
 
     if(res) {
-      tmr->stop.it_value.tv_sec = tmr->duration;
+      this->stop.it_value.tv_sec = this->duration;
 
-      if(timerfd_settime(tmr->fd, 0, &tmr->stop, NULL) < 0) {
+      if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
         return 1;
       } else {
         return 0;
@@ -33,50 +33,49 @@ static uint8_t timer_beep(struct em_curry *ctx, void *arg) {
   return 3;
 }
 
-struct timer *timer_new(timer_cb cb, int duration) {
-  struct timer *new = malloc(sizeof(struct timer));
+uint16_t timer_new(struct timer *this, int duration, timer_cb cb) {
+  this->fd = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK);
 
-  if(new == NULL) {
-    return NULL;
+  if(this->fd < 0) {
+    return TIMER_INST_FAIL;
   }
 
-  new->fd = timerfd_create(CLOCK_REALTIME, TFD_NONBLOCK);
-
-  if(new->fd < 0) {
-    free(new);
-    return NULL;
-  }
-
-  new->stop.it_interval.tv_sec = 0;
-  new->stop.it_interval.tv_nsec = 0;
-  new->stop.it_value.tv_sec = duration;
-  new->stop.it_value.tv_nsec = 0;
-  new->duration = duration;
-  new->iteration = 0;
-  new->cb = cb;
-  return new;
+  this->stop.it_interval.tv_sec = 0;
+  this->stop.it_interval.tv_nsec = 0;
+  this->stop.it_value.tv_sec = duration;
+  this->stop.it_valur.tv_nsec = 0;
+  this->duration = duration;
+  this->iteration = 0;
+  this->cb = cb;
+  return LYRA_SUCCESS;
 }
 
-uint8_t timer_del(struct timer *tmr) {
-  close(tmr->fd);
-  free(tmr);
-  return 0;
+uint16_t timer_del(struct timer *this) {
+  close(this->fd);
+  this->fd = -1;
+  this->stop.it_interval.tv_sec = 0;
+  this->stop.it_interval.tv_nsec = 0;
+  this->stop.it_value.tv_sec = 0;
+  this->stop.it_value.tv_nsec = 0;
+  this->duration = 0;
+  this->iteration = 0;
+  return LYRA_SUCCESS;
 }
 
-uint8_t timer_start(struct em *mgr, struct timer *tmr) {
-  tmr->stop.it_value.tv_sec = tmr->duration;
+uint8_t timer_start(struct timer *this, struct em *mgr) {
+  this->stop.it_value.tv_sec = this->duration;
 
-  if(timerfd_settime(tmr->fd, 0, &tmr->stop, NULL) < 0) {
+  if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
     return 42;
   }
 
-  return em_watch(mgr, tmr->fd, EM_READ, timer_beep, tmr, 0);
+  return em_watch(mgr, this->fd, EM_READ, timer_beep, this, 0);
 }
 
-uint8_t timer_stop(struct timer *tmr) {
-  tmr->stop.it_value.tv_sec = 0;
+uint8_t timer_stop(struct timer *this) {
+  this->stop.it_value.tv_sec = 0;
 
-  if(timerfd_settime(tmr->fd, 0, &tmr->stop, NULL) < 0) {
+  if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
     return 1;
   } else {
     return 0;
