@@ -6,13 +6,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static uint8_t timer_beep(struct em_curry *ctx, void *arg) {
+static uint16_t timer_beep(struct em_curry *ctx, void *arg) {
   struct timer *this = arg;
   uint64_t buf = 0;
   ssize_t bytes = read(ctx->fd, &buf, sizeof(buf));
 
   if(bytes < 0 && errno != EAGAIN) {
-    return 2;
+    return TIMER_NOT_READY;
   } else if(bytes == sizeof(uint64_t)) {
     this->iteration += 1;
     uint8_t res = this->cb(this->duration, this->iteration);
@@ -21,13 +21,13 @@ static uint8_t timer_beep(struct em_curry *ctx, void *arg) {
       this->stop.it_value.tv_sec = this->duration;
 
       if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
-        return 1;
+        return TIMER_RENEW_FAIL;
       } else {
-        return 0;
+        return LYRA_SUCCES;
       }
     } else {
       em_ignore(ctx->mgr, ctx);
-      return 0;
+      return LYRA_SUCCESS;
     }
   }
 
@@ -67,7 +67,7 @@ uint8_t timer_start(struct timer *this, struct em *mgr) {
   this->stop.it_value.tv_sec = this->duration;
 
   if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
-    return 42;
+    return TIMER_START_FAIL;
   }
 
   return em_watch(mgr, this->fd, EM_READ, timer_beep, this, 0);
@@ -77,8 +77,8 @@ uint8_t timer_stop(struct timer *this) {
   this->stop.it_value.tv_sec = 0;
 
   if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
-    return 1;
+    return TIMER_STOP_FAIL;
   } else {
-    return 0;
+    return LYRA_SUCCESS;
   }
 }

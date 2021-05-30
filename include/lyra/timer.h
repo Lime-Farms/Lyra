@@ -6,6 +6,10 @@
 
 #define LYRA_TIMER 600
 #define TIMER_INST_FAIL 601
+#define TIMER_NOT_READY 602
+#define TIMER_RENEW_FAIL 603
+#define TIMER_START_FAIL 604
+#define TIMER_STOP_FAIL 605
 
 typedef uint8_t (*timer_cb)(int duration, uint16_t iteration);
 

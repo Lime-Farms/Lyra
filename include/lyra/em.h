@@ -12,7 +12,7 @@
 #define EM_MAX_EVENTS 64
 
 struct em_curry;
-typedef uint8_t (*em_cb)(struct em_curry *ctx, void *arg);
+typedef uint16_t (*em_cb)(struct em_curry *ctx, void *arg);
 
 struct em {
   int fd;
