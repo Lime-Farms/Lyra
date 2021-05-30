@@ -52,16 +52,19 @@ uint16_t ring_write(struct ring *this, char *str, uint16_t len) {
   return len;
 }
 
-char *ring_read(struct ring *this, uint16_t *len) {
+char *ring_read(struct ring *this, uint16_t *len, uint8_t options) {
   char *str = malloc(*len);
   uint16_t idx = 0;
+  uint8_t modifier = 0;
 
   if(str == NULL) {
     *len = KERNEL_MALLOC_FAIL;
     return NULL;
+  } else if(options & RING_ADD_NUL) {
+    modifier = 1;
   }
 
-  while(idx < (*len - 1) && this->reader != this->writer) {
+  while(idx < (*len - modifier) && this->reader != this->writer) {
     str[idx] = *this->reader;
     idx += 1;
     this->reader += 1;
@@ -75,7 +78,10 @@ char *ring_read(struct ring *this, uint16_t *len) {
     *len = RING_EMPTY;
     return NULL;
   } else {
-    str[idx] = '\0';
+    if(modifier) {
+      str[idx] = '\0';
+    }
+
     *len -= idx;
     return str;
   }
@@ -100,6 +106,6 @@ char *ring_readln(struct ring *this, uint16_t *len) {
   }
 
   uint16_t line_len = *len + 1;
-  char *str = ring_read(this, &line_len);
+  char *str = ring_read(this, &line_len, 0);
   return str;
 }

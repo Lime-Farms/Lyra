@@ -9,6 +9,8 @@
 #define RING_EMPTY 702
 #define RING_NO_LINE 703
 
+#define RING_ADD_NUL (1 << 0)
+
 struct ring {
   uint16_t buflen;
   char *buffer;
@@ -22,7 +24,7 @@ uint16_t ring_new(struct ring *this, uint16_t len);
 uint16_t ring_del(struct ring *this);
 
 uint16_t ring_write(struct ring *this, char *str, uint16_t len);
-char *ring_read(struct ring *this, uint16_t *len);
+char *ring_read(struct ring *this, uint16_t *len, uint8_t options);
 char *ring_readln(struct ring *this, uint16_t *len);
 
 #endif
