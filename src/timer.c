@@ -23,7 +23,7 @@ static uint16_t timer_beep(struct em_curry *ctx, void *arg) {
       if(timerfd_settime(this->fd, 0, &this->stop, NULL) < 0) {
         return TIMER_RENEW_FAIL;
       } else {
-        return LYRA_SUCCES;
+        return LYRA_SUCCESS;
       }
     } else {
       em_ignore(ctx->mgr, ctx);
