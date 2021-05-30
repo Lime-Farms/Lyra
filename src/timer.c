@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 199309L
 
 #include <errno.h>
+#include <lyra/error.h>
 #include <lyra/timer.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -43,7 +44,7 @@ uint16_t timer_new(struct timer *this, int duration, timer_cb cb) {
   this->stop.it_interval.tv_sec = 0;
   this->stop.it_interval.tv_nsec = 0;
   this->stop.it_value.tv_sec = duration;
-  this->stop.it_valur.tv_nsec = 0;
+  this->stop.it_value.tv_nsec = 0;
   this->duration = duration;
   this->iteration = 0;
   this->cb = cb;

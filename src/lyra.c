@@ -46,12 +46,12 @@ int main(int argc, char **argv, char **env) {
   struct timer t1;
   struct timer t2;
 
-  if(timer_new(&t1, beep, 10) > 0) {
+  if(timer_new(&t1, 10, beep) > 0) {
     fprintf(stderr, "uh oh: t1\n");
     em_del(mgr);
     hm_del(&env_vars);
     return 1;
-  } else if(timer_new(&t2, beep, 5) > 0) {
+  } else if(timer_new(&t2, 5, beep) > 0) {
     fprintf(stderr, "uh oh: t2\n");
     timer_del(&t1);
     em_del(mgr);
