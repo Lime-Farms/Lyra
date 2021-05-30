@@ -24,7 +24,6 @@ struct em_curry {
   struct epoll_event *event;
   em_cb cb;
   void *arg;
-  struct ring *buffer;
   uint8_t options;
   struct em *mgr;
 };
