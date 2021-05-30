@@ -45,7 +45,6 @@ uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg, ui
   curry->event = malloc(sizeof(struct epoll_event));
 
   if(curry->event == NULL) {
-    ring_del(curry->buffer);
     free(curry);
     return 3;
   }
