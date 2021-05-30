@@ -8,7 +8,7 @@ uint16_t ring_new(struct ring *this, uint16_t len) {
   }
 
   this->buflen = len + 1;
-  this->buffer = malloc(new->buflen);
+  this->buffer = malloc(this->buflen);
 
   if(this->buffer == NULL) {
     return KERNEL_MALLOC_FAIL;
@@ -22,12 +22,12 @@ uint16_t ring_new(struct ring *this, uint16_t len) {
 }
 
 uint16_t ring_del(struct ring *this) {
-  buf->buflen = 0;
-  buf->begin = NULL;
-  buf->end = NULL;
-  buf->reader = NULL;
-  buf->writer = NULL;
-  free(buf->buffer);
+  this->buflen = 0;
+  this->begin = NULL;
+  this->end = NULL;
+  this->reader = NULL;
+  this->writer = NULL;
+  free(this->buffer);
   return LYRA_SUCCESS;
 }
 
