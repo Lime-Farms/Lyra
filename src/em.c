@@ -38,20 +38,13 @@ uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg, ui
   curry->fd = fd;
   curry->cb = cb;
   curry->arg = arg;
-  curry->buffer = ring_new(4096); /* TODO: make buf size configurable */
   curry->mgr = ctx;
   curry->options = options;
   ctx->events += 1;
 
-  if(curry->buffer == NULL) {
-    free(curry);
-    return 2;
-  }
-
   curry->event = malloc(sizeof(struct epoll_event));
 
   if(curry->event == NULL) {
-    ring_del(curry->buffer);
     free(curry);
     return 3;
   }
@@ -67,7 +60,6 @@ uint8_t em_watch(struct em *ctx, int fd, uint8_t events, em_cb cb, void *arg, ui
   curry->event->data.ptr = (void *) curry;
 
   if(epoll_ctl(ctx->fd, EPOLL_CTL_ADD, fd, curry->event) < 0) {
-    ring_del(curry->buffer);
     free(curry->event);
     free(curry);
     return 3;
@@ -88,7 +80,6 @@ uint8_t em_ignore(struct em *ctx, struct em_curry *curry) {
     close(curry->fd);
   }
 
-  ring_del(curry->buffer);
   free(curry->event);
   free(curry);
   return 0;

@@ -43,13 +43,27 @@ int main(int argc, char **argv, char **env) {
   }
 
   struct em *mgr = em_new();
-  struct timer *t1 = timer_new(beep, 10);
-  struct timer *t2 = timer_new(beep, 5);
-  timer_start(mgr, t1);
-  timer_start(mgr, t2);
+  struct timer t1;
+  struct timer t2;
+
+  if(timer_new(&t1, 10, beep) > 0) {
+    fprintf(stderr, "uh oh: t1\n");
+    em_del(mgr);
+    hm_del(&env_vars);
+    return 1;
+  } else if(timer_new(&t2, 5, beep) > 0) {
+    fprintf(stderr, "uh oh: t2\n");
+    timer_del(&t1);
+    em_del(mgr);
+    hm_del(&env_vars);
+    return 1;
+  }
+
+  timer_start(&t1, mgr);
+  timer_start(&t2, mgr);
   em_run(mgr);
-  timer_del(t1);
-  timer_del(t2);
+  timer_del(&t1);
+  timer_del(&t2);
   em_del(mgr);
   hm_del(&env_vars);
   return 0;
